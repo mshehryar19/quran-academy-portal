@@ -371,39 +371,136 @@ Primary pages impacted:
 
 ## Missing Clarifications / Assumptions
 
-### Open questions (to clarify before implementation)
-1. **Role overlap**: Accountant role is listed but portal pages/permissions are not defined.
-2. **Leave approval path ambiguity**: “Supervisor or HR” then “Supervisor forwards to Admin” is unclear when HR receives first.
-3. **Leave type policy**: Are all 12 annual leaves paid? Any distinction (sick/casual/emergency)?
-4. **Leave cycle**: Calendar year vs contract year vs rolling 12 months.
-5. **Late deduction formula**: Per-minute deduction rate and cap are not specified.
-6. **Grace logic**: Is exactly 15 minutes late considered on-time or late? SRS says “more than 15”.
-7. **Attendance source**: Is teacher “login/logout” the official attendance marker, or separate attendance action required?
-8. **Class start constraints**: Can a teacher start class without prior attendance sign-in?
-9. **Student absence compensation**: If student absent, does teacher still receive payment for that slot?
-10. **Reassignment window**: Is reassignment allowed only before slot start, during slot, or post-marking absent?
-11. **Lesson summary timing**: Deadline for submission (immediate, same day, configurable)?
-12. **Immutable summary exceptions**: Should admin/supervisor have correction override with audit log?
-13. **Progress metrics**: Definition of memorization progress scale and performance rubric.
-14. **Task completion model**: How are tasks marked complete and by whom (student/teacher)?
-15. **Reschedule approvals**: Can supervisors reject; is parent confirmation needed for minors?
-16. **Fee model**: Monthly flat tuition vs per-class billing; proration rules.
-17. **Tax configuration**: Source and change management for FBR/government tax rates.
-18. **Invoice cadence**: Auto-generation schedule and due-date rules.
-19. **Payment failures/refunds**: Required workflows and status model.
-20. **Currency and rounding**: Rounding policy for taxes/deductions.
-21. **Advance salary workflow**: Who can request (HR/teacher), who approves, deduction recovery schedule.
-22. **Violation policy**: Violation categories, thresholds, escalation, expiry/closure rules.
-23. **Notification preferences**: Per-user channel opt-in, timing, language template requirements.
-24. **Parent-student mapping**: One parent to many students? Multiple guardians per student?
-25. **Timezone policy**: Single academy timezone vs user-local timezone.
+### Finalized Clarifications (Now Confirmed System Rules)
 
-### Working assumptions (until clarified)
-- Admin is final approval authority for financial and leave outcomes.
-- Teacher and student profiles remain active/inactive (soft status lifecycle).
-- All sensitive edits/actions require audit logging.
-- Immutable lesson summaries are hard-locked after submit.
-- Supervisor is operational owner of schedule integrity.
+1. **Accountant role (planned, not finalized)**
+   - Accountant remains a valid role in the platform roadmap.
+   - Current intended scope includes student payment records, invoice/payment monitoring, and financial reports.
+   - Salary transaction access is potential future scope (view/record only if later approved).
+   - Detailed pages and final permission matrix are deferred until dedicated requirements are completed.
+
+2. **Leave approval workflow (final authority: Admin)**
+   - Teacher/employee submits leave request.
+   - Supervisor reviews first and can approve/reject with optional comment.
+   - After supervisor action, Admin reviews and gives final approve/reject decision with optional comment.
+   - Final status always follows Admin decision:
+     - Supervisor rejected + Admin approved = **Approved**.
+     - Supervisor approved + Admin rejected = **Rejected**.
+   - HR does not perform final approval.
+   - HR must have a dedicated leave-monitoring page for full request visibility, statuses, counts, history, and records.
+
+3. **Leave policy and leave categories**
+   - Each employee is entitled to **12 annual leaves**.
+   - These regular annual leaves are paid by default.
+   - Leave records must explicitly support a payment status: **Paid** or **Unpaid**.
+   - For unpaid leave, leave type must be captured.
+   - Supported leave types: **Medical**, **Casual**, **Emergency**, **Unpaid**.
+   - Leave requests must support medical attachment upload where required.
+
+4. **Leave cycle basis**
+   - Leave cycle is based on **employee appointment date**, not calendar year.
+   - Leave balance renews automatically after each completed one-year service cycle from joining date.
+
+5. **Late deduction formula**
+   - Late salary deduction is calculated using employee per-minute salary value derived from base salary.
+   - Deduction applies to all counted late minutes.
+   - No deduction cap currently applies.
+
+6. **Grace period and deduction application**
+   - Up to and including **15 minutes late** is treated as no-deduction grace.
+   - At **16 minutes late or more**, deduction applies to the **full late duration** (not only minutes above 15).
+
+7. **Attendance mechanism**
+   - Attendance is captured through a **separate attendance page**.
+   - Attendance uses portal-assigned ID with **digits-only entry** for attendance input convenience.
+   - This attendance page is Admin-controlled and not part of standard employee portal navigation.
+
+8. **Attendance non-blocking rule**
+   - Teachers can start/manage classes even if attendance sign-in/sign-out was missed.
+   - Reporting must explicitly flag missing attendance events (e.g., did not login, did not logout).
+
+9. **Student absence compensation**
+   - Teacher is paid fully for a class slot even when student is absent.
+   - No teacher salary deduction is applied due to student absence.
+
+10. **Reassignment control window**
+   - When student is marked absent, teacher can mark self available for that slot.
+   - Supervisor can reassign only to a compatible free/empty slot with no teacher assigned.
+   - Reassignment must not occur mid-way in an already running class/slot.
+
+11. **Lesson summary timing**
+   - Expected submission is immediately after class.
+   - Allowed grace window: same day or next day submission.
+
+12. **Lesson summary override control**
+   - Lesson summaries are immutable by default.
+   - Only Admin can override/correct a submitted summary.
+   - Every override must be captured in audit trail logs.
+
+13. **Task completion ownership**
+   - Task/homework completion status is teacher-marked as completed or not completed.
+   - Parent portal must expose task/homework completion status.
+
+14. **Reschedule request decisioning**
+   - Student can submit a reschedule request.
+   - Supervisor can approve or reject.
+   - Rejection should support supervisor comment/reason.
+   - Parent confirmation is not required in current scope.
+
+15. **Fee model**
+   - Tuition is **monthly flat fee**, not per-class billing.
+
+16. **Tax and payment scope (current planning phase)**
+   - Immediate operational focus is international fee payments.
+   - Tax operational detail remains partially deferred pending final tax process definition.
+
+17. **Invoice cadence baseline**
+   - Fee vouchers/invoices must be auto-generated.
+   - Exact generation day, due date, and reminder schedule remain configurable/open.
+
+18. **Currency policy**
+   - Default fee currency: **GBP**.
+   - System must also support **USD** as selectable fee currency.
+   - Currency value must be stored with each fee/billing record.
+
+19. **Advance salary baseline rule**
+   - Any employee can request advance salary.
+   - Approved advance amount is deducted from the next salary cycle.
+
+20. **Violation and policy alerts model**
+   - Admin can issue violation notices, rule notices, and policy/disciplinary alerts.
+   - Category system is flexible and not restricted to a fixed master list at this stage.
+   - Detailed messages can be sent by email; concise alert should also appear in portal notifications.
+
+21. **Notification channel selection**
+   - Admin can choose delivery channel(s) per notification:
+     - WhatsApp
+     - Email
+     - Portal notification
+
+22. **Parent-student relationship model**
+   - One parent can be linked to multiple students.
+
+23. **Timezone policy**
+   - System should display times based on user local timezone where applicable.
+
+### Still Open / To Be Decided Later
+
+1. Detailed Accountant portal pages and final permission scope.
+2. Memorization progress scale and performance rubric definition.
+3. Payment failure workflow.
+4. Refund workflow.
+5. Tax configuration source and update process.
+6. Currency rounding policy.
+7. Exact invoice generation date and due-date rules.
+8. Exact advance salary approval chain if stricter workflow is required.
+
+### Updated Working Assumptions
+
+- Admin remains the final authority for leave outcome and key financial approvals.
+- Teacher and student lifecycle supports active/inactive status management.
+- Sensitive edits and approval actions are audit logged.
+- Supervisor remains operational owner of schedule execution and rescheduling control.
 
 ---
 
