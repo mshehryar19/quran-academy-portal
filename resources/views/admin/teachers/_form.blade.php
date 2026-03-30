@@ -19,6 +19,17 @@
     </div>
 
     <div>
+        <label class="block text-sm font-medium text-gray-700" for="attendance_digits">Attendance ID (digits only)</label>
+        <input id="attendance_digits" name="attendance_digits" type="text" inputmode="numeric" pattern="\d*"
+               autocomplete="off"
+               value="{{ old('attendance_digits', $teacher->attendance_digits ?? '') }}"
+               placeholder="6–16 digits"
+               class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm font-mono shadow-sm focus:border-gray-900 focus:outline-none">
+        <p class="mt-1 text-xs text-gray-500">Used on the separate employee attendance page (not the portal password).</p>
+        @error('attendance_digits')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
+    </div>
+
+    <div>
         <label class="block text-sm font-medium text-gray-700" for="phone">Phone</label>
         <input id="phone" name="phone" type="text" value="{{ old('phone', $teacher->phone ?? '') }}"
                class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-gray-900 focus:outline-none">

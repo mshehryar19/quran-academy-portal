@@ -29,7 +29,7 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerate();
 
         $user = $request->user();
-        $dashboardRoute = $user?->hasAnyRole(['Admin', 'HR', 'Supervisor'])
+        $dashboardRoute = $user?->hasAnyRole(['Admin', 'HR', 'Supervisor', 'Accountant'])
             ? 'admin.dashboard'
             : 'dashboard';
 

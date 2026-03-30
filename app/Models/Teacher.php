@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
@@ -15,6 +16,7 @@ class Teacher extends Model
     protected $fillable = [
         'user_id',
         'public_id',
+        'attendance_digits',
         'full_name',
         'email',
         'phone',
@@ -42,6 +44,11 @@ class Teacher extends Model
     public function classSchedules(): HasMany
     {
         return $this->hasMany(ClassSchedule::class);
+    }
+
+    public function classSessions(): HasManyThrough
+    {
+        return $this->hasManyThrough(ClassSession::class, ClassSchedule::class);
     }
 
     public function getActivitylogOptions(): LogOptions

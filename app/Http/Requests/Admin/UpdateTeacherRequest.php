@@ -33,6 +33,12 @@ class UpdateTeacherRequest extends FormRequest
             'timezone' => ['nullable', 'string', 'max:64'],
             'notes' => ['nullable', 'string', 'max:5000'],
             'status' => ['required', Rule::in(['active', 'inactive'])],
+            'attendance_digits' => [
+                'nullable',
+                'string',
+                'regex:/^\d{6,16}$/',
+                Rule::unique('teachers', 'attendance_digits')->ignore($teacher->id),
+            ],
         ];
     }
 }

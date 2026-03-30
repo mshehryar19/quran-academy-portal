@@ -4,25 +4,34 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ config('app.name', 'Quran Academy Portal') }}</title>
+    <title>{{ $portalDisplayName ?? config('app.name', 'Quran Academy Portal') }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @stack('styles')
 </head>
-<body class="bg-gray-100 text-gray-900 antialiased">
-    <div class="min-h-screen">
-        @include('layouts.partials.topbar')
+<body class="app-body text-slate-900 antialiased">
+    <div class="min-h-screen" x-data="{ sidebarOpen: false }">
+        <div
+            x-show="sidebarOpen"
+            x-transition.opacity
+            @click="sidebarOpen = false"
+            @keydown.escape.window="sidebarOpen = false"
+            class="fixed inset-0 z-30 bg-slate-900/40 backdrop-blur-sm lg:hidden"
+            x-cloak
+            aria-hidden="true"
+        ></div>
 
-        <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 gap-6 lg:grid-cols-12">
-                <aside class="lg:col-span-3">
-                    @include('layouts.partials.sidebar')
-                </aside>
+        @include('layouts.sidebar')
 
-                <main class="lg:col-span-9">
-                    @include('layouts.partials.alerts')
+        <div class="flex min-h-screen flex-col lg:pl-64">
+            @include('layouts.header')
 
-                    @yield('content')
-                </main>
-            </div>
+            <main class="app-main flex-1 px-4 py-6 sm:px-6 lg:px-8">
+                @include('layouts.partials.alerts')
+                @yield('content')
+            </main>
         </div>
     </div>
     @stack('scripts')

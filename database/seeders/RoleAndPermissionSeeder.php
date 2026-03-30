@@ -34,6 +34,7 @@ class RoleAndPermissionSeeder extends Seeder
             'task.manage',
             'leave.review',
             'leave.request',
+            'leave.monitor',
             'salary.manage',
             'salary.view',
             'invoice.manage',
@@ -42,6 +43,8 @@ class RoleAndPermissionSeeder extends Seeder
             'notifications.manage',
             'violations.manage',
             'profile.view',
+            'student_billing.view',
+            'search.global',
         ];
 
         foreach ($permissions as $permission) {
@@ -63,6 +66,10 @@ class RoleAndPermissionSeeder extends Seeder
                 'parent.manage',
                 'parent.view',
                 'supervisor.manage',
+                'leave.request',
+                'leave.monitor',
+                'reports.view',
+                'search.global',
                 'profile.view',
             ],
             'Supervisor' => [
@@ -76,6 +83,8 @@ class RoleAndPermissionSeeder extends Seeder
                 'lesson.manage',
                 'task.manage',
                 'leave.review',
+                'reports.view',
+                'search.global',
                 'profile.view',
             ],
             'Teacher' => [
@@ -85,21 +94,26 @@ class RoleAndPermissionSeeder extends Seeder
                 'task.manage',
                 'leave.request',
                 'salary.view',
+                'reports.view',
+                'search.global',
                 'profile.view',
             ],
             'Student' => [
                 'dashboard.view',
                 'profile.view',
+                'student_billing.view',
             ],
             'Parent' => [
                 'dashboard.view',
                 'profile.view',
+                'student_billing.view',
             ],
             'Accountant' => [
                 'dashboard.view',
                 'invoice.manage',
                 'payment.manage',
                 'reports.view',
+                'search.global',
                 'profile.view',
             ],
         ];

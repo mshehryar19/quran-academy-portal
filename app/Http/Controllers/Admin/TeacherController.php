@@ -11,7 +11,6 @@ use App\Services\UniquePublicIdService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
 
 class TeacherController extends Controller
@@ -38,7 +37,7 @@ class TeacherController extends Controller
             $query->where('status', $request->string('status'));
         }
 
-        $teachers = $query->get();
+        $teachers = $query->paginate(40)->withQueryString();
 
         return view('admin.teachers.index', compact('teachers'));
     }
@@ -56,7 +55,7 @@ class TeacherController extends Controller
             $user = User::query()->create([
                 'name' => $request->string('full_name')->toString(),
                 'email' => $request->string('email')->toString(),
-                'password' => Hash::make($request->string('password')->toString()),
+                'password' => $request->string('password')->toString(),
                 'is_active' => $isActive,
             ]);
 
@@ -65,6 +64,9 @@ class TeacherController extends Controller
             Teacher::query()->create([
                 'user_id' => $user->id,
                 'public_id' => $idService->nextTeacherPublicId(),
+                'attendance_digits' => $request->filled('attendance_digits')
+                    ? preg_replace('/\D/', '', $request->string('attendance_digits')->toString())
+                    : null,
                 'full_name' => $request->string('full_name')->toString(),
                 'email' => $request->string('email')->toString(),
                 'phone' => $request->filled('phone') ? $request->string('phone')->toString() : null,
@@ -110,7 +112,7 @@ class TeacherController extends Controller
             ]);
 
             if ($request->filled('password')) {
-                $teacher->user->password = Hash::make($request->string('password')->toString());
+                $teacher->user->password = $request->string('password')->toString();
             }
 
             $teacher->user->save();
@@ -118,6 +120,9 @@ class TeacherController extends Controller
             $teacher->update([
                 'full_name' => $request->string('full_name')->toString(),
                 'email' => $request->string('email')->toString(),
+                'attendance_digits' => $request->filled('attendance_digits')
+                    ? preg_replace('/\D/', '', $request->string('attendance_digits')->toString())
+                    : null,
                 'phone' => $request->filled('phone') ? $request->string('phone')->toString() : null,
                 'gender' => $request->filled('gender') ? $request->string('gender')->toString() : null,
                 'date_of_appointment' => $request->date('date_of_appointment'),

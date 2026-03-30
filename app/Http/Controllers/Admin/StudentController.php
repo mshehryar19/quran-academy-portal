@@ -11,7 +11,6 @@ use App\Services\UniquePublicIdService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
 
 class StudentController extends Controller
@@ -38,7 +37,7 @@ class StudentController extends Controller
             $query->where('status', $request->string('status'));
         }
 
-        $students = $query->get();
+        $students = $query->paginate(40)->withQueryString();
 
         return view('admin.students.index', compact('students'));
     }
@@ -56,7 +55,7 @@ class StudentController extends Controller
             $user = User::query()->create([
                 'name' => $request->string('full_name')->toString(),
                 'email' => $request->string('email')->toString(),
-                'password' => Hash::make($request->string('password')->toString()),
+                'password' => $request->string('password')->toString(),
                 'is_active' => $isActive,
             ]);
 
@@ -109,7 +108,7 @@ class StudentController extends Controller
             ]);
 
             if ($request->filled('password')) {
-                $student->user->password = Hash::make($request->string('password')->toString());
+                $student->user->password = $request->string('password')->toString();
             }
 
             $student->user->save();

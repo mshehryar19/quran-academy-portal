@@ -42,6 +42,16 @@ class Student extends Model
         return $this->hasMany(ClassSchedule::class);
     }
 
+    public function feeProfiles(): HasMany
+    {
+        return $this->hasMany(StudentFeeProfile::class);
+    }
+
+    public function invoices(): HasMany
+    {
+        return $this->hasMany(Invoice::class);
+    }
+
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()

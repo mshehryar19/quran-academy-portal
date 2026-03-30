@@ -11,7 +11,6 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
 
 class AcademyParentController extends Controller
@@ -37,7 +36,7 @@ class AcademyParentController extends Controller
             $query->where('status', $request->string('status'));
         }
 
-        $parents = $query->get();
+        $parents = $query->paginate(40)->withQueryString();
 
         return view('admin.parents.index', compact('parents'));
     }
@@ -57,7 +56,7 @@ class AcademyParentController extends Controller
             $user = User::query()->create([
                 'name' => $request->string('full_name')->toString(),
                 'email' => $request->string('email')->toString(),
-                'password' => Hash::make($request->string('password')->toString()),
+                'password' => $request->string('password')->toString(),
                 'is_active' => $isActive,
             ]);
 
@@ -115,7 +114,7 @@ class AcademyParentController extends Controller
             ]);
 
             if ($request->filled('password')) {
-                $parent->user->password = Hash::make($request->string('password')->toString());
+                $parent->user->password = $request->string('password')->toString();
             }
 
             $parent->user->save();

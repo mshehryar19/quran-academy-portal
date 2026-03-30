@@ -19,7 +19,7 @@ class AdminUserSeeder extends Seeder
             ['email' => $email],
             [
                 'name' => $name,
-                'password' => Hash::make($password),
+                'password' => $password,
             ]
         );
 
@@ -29,7 +29,7 @@ class AdminUserSeeder extends Seeder
 
         if (! Hash::check($password, $admin->password)) {
             $admin->forceFill([
-                'password' => Hash::make($password),
+                'password' => $password,
             ])->save();
         }
 

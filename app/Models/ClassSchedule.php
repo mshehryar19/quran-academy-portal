@@ -52,6 +52,11 @@ class ClassSchedule extends Model
         return $this->hasMany(ScheduleChangeLog::class)->orderByDesc('created_at');
     }
 
+    public function classSessions(): HasMany
+    {
+        return $this->hasMany(ClassSession::class);
+    }
+
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()

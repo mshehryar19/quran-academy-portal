@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -64,5 +65,25 @@ class User extends Authenticatable
     public function academyParent(): HasOne
     {
         return $this->hasOne(AcademyParent::class, 'user_id');
+    }
+
+    public function leaveRequests(): HasMany
+    {
+        return $this->hasMany(LeaveRequest::class);
+    }
+
+    public function salaryProfile(): HasOne
+    {
+        return $this->hasOne(EmployeeSalaryProfile::class);
+    }
+
+    public function monthlySalaryRecords(): HasMany
+    {
+        return $this->hasMany(MonthlySalaryRecord::class);
+    }
+
+    public function advanceSalaryRequests(): HasMany
+    {
+        return $this->hasMany(AdvanceSalaryRequest::class);
     }
 }

@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreStaffUserRequest;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
 
 class StaffUserController extends Controller
@@ -31,7 +30,7 @@ class StaffUserController extends Controller
         $user = User::query()->create([
             'name' => $request->string('name')->toString(),
             'email' => $request->string('email')->toString(),
-            'password' => Hash::make($request->string('password')->toString()),
+            'password' => $request->string('password')->toString(),
             'is_active' => true,
         ]);
 

@@ -9,6 +9,7 @@ use App\Models\ClassSchedule;
 use App\Models\ClassSlot;
 use App\Models\Student;
 use App\Models\Teacher;
+use App\Services\SystemNotificationDispatcher;
 use App\Support\ScheduleChangeLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -70,7 +71,7 @@ class ClassScheduleController extends Controller
         return view('admin.class-schedules.create', compact('teachers', 'students', 'slots'));
     }
 
-    public function store(StoreClassScheduleRequest $request): RedirectResponse
+    public function store(StoreClassScheduleRequest $request, SystemNotificationDispatcher $notifications): RedirectResponse
     {
         $schedule = DB::transaction(function () use ($request) {
             $schedule = ClassSchedule::query()->create([
@@ -96,6 +97,9 @@ class ClassScheduleController extends Controller
 
             return $schedule;
         });
+
+        $schedule->load(['teacher.user', 'student.user', 'classSlot']);
+        $notifications->scheduleAssigned($schedule);
 
         return redirect()->route('admin.class-schedules.show', $schedule)->with('status', __('Schedule created.'));
     }
